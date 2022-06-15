@@ -1,0 +1,14 @@
+*{
+    margin: 0;
+    box-sizing: border-box;
+}
+
+div{
+    width: 200px;
+    height: 200px;
+    background-color: lightgreen;
+}
+
+.change-color{
+    background-color: blueviolet;
+}
