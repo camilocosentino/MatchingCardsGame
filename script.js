@@ -3,6 +3,7 @@ function comienzaPartida(){
     let cardsSelected = 0;
     let cardsSelection = [];
     let kittiesSelected = [];
+    let cardsNotToHide = [];
     // let cardElementsList = [] ;
     //Urls imagenes de gatitos
     const urls = [
@@ -63,7 +64,6 @@ function comienzaPartida(){
         const randomURLS = randomUrls();
        
         let cardsDivs = document.querySelectorAll(".cards div");
-        // console.log(cardsDivs);
         for (let index = 0; index <= 15; index++) {
             cardsDivs[index].style.backgroundImage = `url(${randomURLS[index]})`;
         }
@@ -71,67 +71,129 @@ function comienzaPartida(){
     }
 
     function showGameboard(){
+        
         cardsDivs.forEach(card => {
-            card.classList.add("backface-visibility");
+            
+                card.classList.add("backface-visibility");
+            
         });
     }
-    function hideGameboard(){
-        cardsDivs.forEach(card => {
-            card.classList.remove("backface-visibility");
-        });
+    function hideGameboard(notHidedCards){
+        if (notHidedCards) {
+            cardsDivs.forEach(card => {
+                let condition = notHidedCards.includes(card.children[0].attributes[1].nodeValue);
+                if (!condition) {
+                    card.classList.remove("backface-visibility");
+                }
+            });
+        }else{
+            cardsDivs.forEach(card => {
+                card.classList.remove("backface-visibility");
+            });
+        }
+        
+                   
     }
+    
+    // function addEventListenerToCards(){
+    //     // console.log(cardsDivs);
+    //     cardsDivs.forEach(card => {
+    //         //Si quieres pasar parámetros a la función del listener, debes utilizar funciones anónimas.
+    //         card.addEventListener("click", function handler(){
+    //             addBackfaceTransitionClass(card)
+    //         }, false);
+    //     });
+    // }
     function addEventListenerToCards(){
         // console.log(cardsDivs);
         cardsDivs.forEach(card => {
-            //Si quieres pasar parámetros a la función del listener, debes utilizar funciones anónimas.
-            card.addEventListener("click", function handler(){
-                addBackfaceTransitionClass(card)
-            }, false);
+            card.addEventListener("click", addBackfaceTransitionClass, false);
         });
     }
     function removeEventListener(kitty){
         if (kitty) {
-            kitty.replaceWith(kitty.cloneNode(true));
+            // kitty.replaceWith(kitty.cloneNode(true));
+            kitty.removeEventListener("click", addBackfaceTransitionClass, false);
         } else {
+
             cardsDivs.forEach(card => {
                 //Si quieres pasar parámetros a la función del listener, debes utilizar funciones anónimas.
-                card.replaceWith(card.cloneNode(true));
-                // card.removeEventListener("click");
+                // card.replaceWith(card.cloneNode(true));
+                card.removeEventListener("click", addBackfaceTransitionClass, false);
             });
         }
         
     }
-    function addBackfaceTransitionClass(card){
+    // function addBackfaceTransitionClass(card){
+    //     cardsSelected++;
+    //     card.classList.add("backface-visibility");
+    //     removeEventListener(card);
+    //     cardsSelection.push(card.children[0].attributes[1].nodeValue);
+    //     console.log(cardsSelected);
+    //     if (cardsSelected == 2) {
+    //         kittiesSelected = document.querySelectorAll(".backface-visibility");
+    //         removeEventListener();
+    //         setInterval(() => {
+    //             validateCardsPair(kittiesSelected);
+    //         }, 2000);
+            
+    //         console.log(cardsSelection);
+    //     }
+    
+    // }
+    function addBackfaceTransitionClass(ev){
+        
+        let card = ev.path[0];
+        
+        //console.log(card);
         cardsSelected++;
         card.classList.add("backface-visibility");
         removeEventListener(card);
         cardsSelection.push(card.children[0].attributes[1].nodeValue);
-        console.log(cardsSelected);
+        // console.log(cardsSelected, cardsSelection);
         if (cardsSelected == 2) {
-            kittiesSelected = document.querySelectorAll(".backface-visibility");
-            removeEventListener();
-            setInterval(() => {
-                validateCardsPair(kittiesSelected);
-            }, 2000);
             
-            console.log(cardsSelection);
-        }
-    
+            
+            removeEventListener();
+            setTimeout(() => {
+               //debugger
+             validateCardsPair();
+             
+            }, 3000);
+            
+            setTimeout(() => {
+                //debugger
+                showGameboard();
+             }, 5000);
+             
+             setTimeout(() => {
+                //debugger
+                hideGameboard(cardsNotToHide);
+                cardsSelection = [];
+             }, 8000);
+             setTimeout(() => {
+                //debugger
+                addEventListenerToCards();
+             }, 8500);
+            
+        } 
     }
-    function validateCardsPair(kittiesSelected){
+    function validateCardsPair(){
+        
         if (cardsSelection[0] == cardsSelection[1]) {
             console.log("Congratulations bro");
-        }else{
-            kittiesSelected.forEach(card => {
-                console.log(card);
-                
-            card.classList.remove("backface-visibility")
-                               
-        });
-           
-        addEventListenerToCards(); 
+            cardsNotToHide = cardsNotToHide.concat(cardsSelection);
+            console.log(cardsNotToHide);            
         }
+    
+        cardsSelected = 0;
+        if (cardsNotToHide.length == 2) {
+            
+            alert("Ganaste Vieja");
+           
+            
         
+        }
     }
 
     loadStickersOnCards();
