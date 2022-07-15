@@ -187,12 +187,10 @@ function comienzaPartida(){
         }
     
         cardsSelected = 0;
-        if (cardsNotToHide.length == 2) {
+        if (cardsNotToHide.length == 16) {
             
             alert("Ganaste Vieja");
-           
-            
-        
+            window.location.reload();
         }
     }
 
